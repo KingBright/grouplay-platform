@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="js/lib/cookies.js"></script>
+    <script src="js/lib/sockjs.js"></script>
+    <link href="//cdn.bootcss.com/semantic-ui/2.1.4/semantic.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/semantic-ui/2.1.4/semantic.js"></script>
+    <script src="//cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
+    <title>Grouplay</title>
+    <style>
+        #group_panel {
+            height: 100%;
+            width: 100%
+        }
+    </style>
+</head>
+
+<body ng-app="grouplay" ng-controller="grouplay-ctrl">
+<div ng-if="!canShowGamePage()" id="group_panel" class="ui inverted segment">
+    <div class="ui centered grid">
+        <div class="eight wide column">
+            <div class="ui huge olive header">Grouplay</div>
+            <!-- Participating -->
+            <h3 class="ui yellow inverted header">My Group</h3>
+
+            <div class="ui inverted relaxed divided list">
+                <div ng-if="joined" class="item">
+                    <div class="right floated content">
+                        <!-- Start game button -->
+                        <div class="ui buttons">
+                            <div ng-if="myGroup()&&canStart()" ng-click="startGame(joined.id)"
+                                 class="ui inverted green button">
+                                Start
+                            </div>
+                            <div ng-if="myGroup()&&!canStart()" ng-click="startGame(joined.id)"
+                                 class="ui inverted green disabled button">Start
+                            </div>
+                            <div ng-if="canExit()" onclick="showExit()" class="ui inverted red button">
+                                Exit
+                            </div>
+                            <div ng-if="!canExit()" onclick="showExit()"
+                                 class="ui inverted red disabled button">Exit
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="ui grey inverted header"> Hosted by {{groups.joined.host}}</h5>
+
+                    <div class="ui mini black label">
+                        <i class="gamepad icon"></i> {{groups.joined.current}} / {{groups.joined.limit}}
+                    </div>
+                    <div class="ui mini black label">
+                        <i class="eye icon"></i> {{groups.joined.spectators}}
+                    </div>
+                    <div ng-if="joined.playing" class="ui horizontal green label">Playing</div>
+                </div>
+                <div ng-if="!joined" class="content animate-if">
+                    You haven't joined a group yet.
+                </div>
+                <!-- Exit group dialog -->
+                <div id="exit_group" class="ui small modal">
+                    <div class="header">Confirm to Exit</div>
+                    <div class="content">
+                        <div class="description">
+                            <p>Are you sure you want to exit the group?</p>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <div ng-click="exitGroup()" class="ui approve button">Exit</div>
+                        <div class="ui cancel button">Cancel</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waiting -->
+            <h3 class="ui yellow inverted header">Waiting Groups</h3>
+
+            <div class="ui inverted relaxed divided list">
+                <div ng-if="groups.waiting&&groups.waiting.length>0" ng-repeat="item in groups.waiting"
+                     class="item">
+                    <div class="right floated content">
+                        <!-- Join button -->
+                        <div ng-switch="canJoin(item)"
+                             class="ui buttons">
+                            <div ng-switch-when="true" ng-click="joinGroup(item.id)"
+                                 class="ui inverted blue button">Join
+                            </div>
+                            <div ng-switch-when="false" ng-click="joinGroup(item.id)"
+                                 class="ui inverted blue disabled button">Join
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="ui grey inverted header">Hosted by {{item.host}}</h5>
+
+                    <div class="ui mini black label">
+                        <i class="gamepad icon"></i> {{item.current}} / {{item.limit}}
+                    </div>
+                    <div class="ui mini black label">
+                        <i class="eye icon"></i> {{item.spectators}}
+                    </div>
+                </div>
+                <div ng-if="!groups.waiting||groups.waiting.length==0" class="content animate-if">
+                    No waiting groups found.
+                </div>
+
+                <!-- Playing -->
+                <h3 class="ui yellow inverted header">Playing Groups</h3>
+
+                <div ng-if="groups.playing&&groups.playing.length>0" ng-repeat="item in groups.playing"
+                     class="item">
+                    <div class="right floated content">
+                        <!-- Spectate button -->
+                        <div ng-switch="item.allowSpectator" class="ui buttons">
+                            <div ng-switch-when="true" ng-click="spectateGroup(item.id)"
+                                 class="ui inverted purple button">Spectate
+                            </div>
+                            <div ng-switch-when="false" ng-click="spectateGroup(item.id)"
+                                 class="ui inverted purple disabled button">Spectate
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="ui grey inverted header">Hosted by {{item.host}}</h5>
+
+                    <div class="ui mini black label">
+                        <i class="gamepad icon"></i> {{item.current}} / {{item.limit}}
+                    </div>
+                    <div class="ui mini black label">
+                        <i class="eye icon"></i> {{item.spectators}}
+                    </div>
+                </div>
+                <div ng-if="!groups.playing||groups.playing.length==0" class="content animate-if">
+                    No playing groups found.
+                </div>
+
+                <div class="item">
+                    <!-- Create group button -->
+                    <div onclick="showCreate()" class="fluid ui inverted bottom attached teal button">Create
+                        Group
+                    </div>
+                    <!-- Create group dialog -->
+                    <div id="create_group" class="ui small modal">
+                        <div class="header">Create a Group</div>
+                        <div class="content">
+                            Please set max player number
+                            <select id="player_number" class="ui dropdown">
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+
+                            <div class="ui divider"></div>
+                            <div id="allow_spectators" class="ui checked checkbox">
+                                <input type="checkbox" checked="">
+                                <label>Allow spectators</label>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <div ng-click="createGroup()" class="ui approve button">Create</div>
+                            <div class="ui cancel button">Cancel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Error dialog -->
+            <div id="error_msg" class="ui small modal">
+                <div class="header">
+                    Error Message
+                </div>
+                <div class="content">
+                    <div class="description">
+                        {{errorMsg}}
+                    </div>
+                </div>
+                <div class="actions">
+                    <div class="ui approve button">OK</div>
+                </div>
+            </div>
+            <!-- Set name dialog -->
+            <div id="set_name" class="ui small modal">
+                <div class="header">
+                    Set a Name
+                </div>
+                <div class="content">
+                    <div class="ui input fluid focus">
+                        <input id="name" type="text" ng-model="name" placeholder="Input your name here...">
+                    </div>
+                </div>
+                <div ng-if="name&&name!=''" class="actions">
+                    <div ng-click="register()" class="ui approve button">OK</div>
+                </div>
+            </div>
+            <!-- Set name dialog -->
+            <div id="restore_game" class="ui small modal">
+                <div class="header">
+                    Set a Name
+                </div>
+                <div class="content">
+                    A game is in progress. Restore it!
+                </div>
+                <div ng-if="name&&name!=''" class="actions">
+                    <div ng-click="loadGamePage()" class="ui approve button">OK</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="game_panel" class="ui segment">
+    <div ng-if="canShowGamePage()" class="ui middle aligned centered grid">
+        <div id="game_frame" class="twelve wide column">
+            <ng-include src="gamePage">
+            </ng-include>
+        </div>
+    </div>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="js/controller.js"></script>
+</body>
+
+</html>

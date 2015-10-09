@@ -1,0 +1,25 @@
+<script src="js/game/quoridor/utils.js"></script>
+<script src="js/game/quoridor/phaser.js"></script>
+<script src="js/game/quoridor/astar.js"></script>
+<script src="js/game/quoridor/quoridor.js"></script>
+
+<style>
+    #game_panel {
+        background-image: url(img/game/quoridor/bg.jpg);
+        background-size: 150% auto;
+        height: 100%;
+    }
+
+    #gameframe {
+        cursor: pointer;
+        position: relative;
+        max-width: 830px;
+        max-height: 700px;
+    }
+</style>
+
+<script>
+    quoridor.game.init(800, 600, "game_frame")
+
+    onDataUpdate(quoridor.game.data.updateData)
+</script>
