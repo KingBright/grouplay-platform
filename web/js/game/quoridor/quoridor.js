@@ -76,7 +76,7 @@ quoridor.game.data.updateData = function (data) {
         quoridor.game.data.walls.push(quoridor.game.createWall(item))
     })
 
-    quoridor.game.init(1000, 600, "quoridor")
+    quoridor.game.init(860, 600, "quoridor")
 };
 
 quoridor.game.init = function (w, h, id) {

@@ -207,11 +207,52 @@
     </div>
 </div>
 
-<div id="game_panel" class="ui segment">
-    <div ng-if="canShowGamePage()" class="ui middle aligned centered grid">
+<div ng-if="canShowGamePage()" id="game_panel" class="ui segment">
+    <div class="ui inverted segment">
+        <div class="ui grid">
+            <div class="right floated four wide column">
+                <!-- Spectate button -->
+                <div class="ui buttons">
+                    <div ng-click="refreshGameData()"
+                         class="ui inverted green button">
+                        Refresh
+                    </div>
+                    <div ng-if="myGroup()" ng-click="askForQuit()"
+                         class="ui inverted red button">Quit
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui middle aligned centered grid">
         <div id="game_frame" class="twelve wide column">
             <ng-include onload="setDataUpdateCallback()" src="gamePage">
             </ng-include>
+        </div>
+    </div>
+    <!-- Restore game dialog -->
+    <div id="quit_game" class="ui small modal">
+        <div class="header">
+            Quit the Game
+        </div>
+        <div class="content">
+            Are you sure to quit?
+        </div>
+        <div class="actions">
+            <div ng-click="askForQuit()" class="ui approve button">Yes</div>
+            <div class="ui cancel button">No</div>
+        </div>
+    </div>
+    <!-- Game finish dialog -->
+    <div id="game_finish" class="ui small modal">
+        <div class="header">
+            Game Finished
+        </div>
+        <div class="content">
+            The game is finished, press OK to quit.
+        </div>
+        <div class="actions">
+            <div ng-click="askForQuit()" class="ui approve button">OK</div>
         </div>
     </div>
 </div>

@@ -101,6 +101,14 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
         return $scope.joined && $scope.joined.playing == true && $scope.gamePage
     }
 
+    $scope.refreshGameData = function () {
+        socks.getGameData()
+    }
+
+    $scope.askForQuit = function () {
+        socks.askForQuit()
+    }
+
     $scope.log = function (msg) {
         console.log(msg)
     }
@@ -121,6 +129,8 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     socks.GET_DATA = "get_data"
     socks.PLAYING = "playing"
     socks.PLAYER_ACTION = "player_action"
+    socks.QUIT_GAME = "quit_game"
+    socks.GAME_FINISH = "game_finish"
 
     socks.init = function () {
         socks.sock = new SockJS(':8081/grouplay')
@@ -193,7 +203,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             }
             case this.PLAYING:
             {
-                $scope.loadGamePage("quoridor.html")
+                askForGameRestore()
                 break;
             }
             case this.START_GAME:
@@ -203,14 +213,15 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             }
             case this.UPDATE_DATA:
             {
-                if (!$scope.gamePage) {
-                    askForGameRestore()
-                } else {
-                    console.log("data received", info)
-                    if ($scope.dataUpdateCallback) {
-                        $scope.dataUpdateCallback(info)
-                    }
+                console.log("data received", info)
+                if ($scope.dataUpdateCallback) {
+                    $scope.dataUpdateCallback(info)
                 }
+                break;
+            }
+            case this.GAME_FINISH:
+            {
+                showGameFinish()
                 break;
             }
         }
@@ -261,6 +272,10 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             action: action,
             data: JSON.stringify(data)
         }, false)
+    }
+
+    socks.askForQuit = function () {
+        this.sendMessage(this.QUIT_GAME, {}, false)
     }
 
     var $scope

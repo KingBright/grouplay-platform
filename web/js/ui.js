@@ -32,6 +32,14 @@ askForGameRestore = function () {
     $('#restore_game').modal('setting', {closable: false}).modal('show')
 }
 
+askForQuit = function () {
+    $('#quit_game').modal('setting', {closable: false}).modal('show')
+}
+
+showGameFinish = function() {
+    $('#game_finish').modal('setting', {closable: false}).modal('show')
+}
+
 test = function () {
     console.log("test")
 }
