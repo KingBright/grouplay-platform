@@ -76,7 +76,7 @@ quoridor.game.data.updateData = function (data) {
         quoridor.game.data.walls.push(quoridor.game.createWall(item))
     })
 
-    quoridor.game.init(800, 600, "quoridor")
+    quoridor.game.init(1000, 600, "quoridor")
 };
 
 quoridor.game.init = function (w, h, id) {
@@ -694,6 +694,10 @@ quoridor.game.putDownPendingWall = function (x, y) {
         return
     }
 
+    if (this.data.playerData[this.data.myIndex].wallLeft <= 0) {
+        return
+    }
+
     console.log("add pending wall")
 
     var positions = this.pendingWall.info
@@ -746,6 +750,9 @@ quoridor.game.createWall = function (wallInfo) {
 
 // Calculate the pending wall position. Show a pending wall on the right position
 quoridor.game.createPendingWall = function (x, y) {
+    if (this.data.playerData[this.data.myIndex].wallLeft <= 0) {
+        return
+    }
     var cellWidth = this.cellWidth
     var wallWidth = this.wallWidth
 
