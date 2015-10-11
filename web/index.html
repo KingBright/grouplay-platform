@@ -184,14 +184,14 @@
                 </div>
                 <div class="content">
                     <div class="ui input fluid focus">
-                        <input id="name" type="text" ng-model="name" placeholder="Input your name here...">
+                        <input id="name" type="text" ng-model="player_name" placeholder="Input your name here...">
                     </div>
                 </div>
-                <div ng-if="name&&name!=''" class="actions">
-                    <div ng-click="register()" class="ui approve button">OK</div>
+                <div ng-if="player_name&&player_name!=''" class="actions">
+                    <div ng-click="register(player_name)" class="ui approve button">OK</div>
                 </div>
             </div>
-            <!-- Set name dialog -->
+            <!-- Restore game dialog -->
             <div id="restore_game" class="ui small modal">
                 <div class="header">
                     Set a Name
@@ -210,7 +210,7 @@
 <div id="game_panel" class="ui segment">
     <div ng-if="canShowGamePage()" class="ui middle aligned centered grid">
         <div id="game_frame" class="twelve wide column">
-            <ng-include src="gamePage">
+            <ng-include onload="setDataUpdateCallback()" src="gamePage">
             </ng-include>
         </div>
     </div>

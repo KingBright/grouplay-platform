@@ -28,6 +28,10 @@ askForName = function () {
     $('#set_name').modal('setting', {closable: false}).modal('show')
 }
 
-askForGameRestore = function() {
+askForGameRestore = function () {
     $('#restore_game').modal('setting', {closable: false}).modal('show')
+}
+
+test = function () {
+    console.log("test")
 }

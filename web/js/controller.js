@@ -1,6 +1,8 @@
 var grouplay = angular.module('grouplay', []);
 
-grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $interval) {
+grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($scope, socks) {
+    socks.setScope($scope)
+
     $scope.groups = {}
     $scope.joined
     $scope.name = Cookies.get("name")
@@ -44,13 +46,39 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
         socks.joinGroup(id)
     }
 
-    //TODO
     $scope.spectateGroup = function (id) {
         console.log("spectate group", id)
     }
 
-    $scope.register = function () {
-        socks.register($scope.name)
+    $scope.dataUpdateCallback
+    // For game to register a callback
+    $scope.setDataUpdateCallback = function () {
+        if (onUpdateData) {
+            console.log("Callback found in game")
+            $scope.dataUpdateCallback = onUpdateData
+        } else {
+            console.log("No callback found in game")
+        }
+
+        if (setDataSender) {
+            console.log("Set data sender for game")
+            setDataSender($scope.doGameAction)
+        } else {
+            console.log("Data sender can not be set")
+        }
+        socks.getGameData()
+    }
+    // For game to transact with server
+    $scope.doGameAction = function (action, data) {
+        socks.playerAction(action, data)
+    }
+
+    $scope.register = function (name) {
+        if (!name && name == "") {
+            name = $scope.name
+        }
+        console.log("register", name)
+        socks.register(name)
     }
 
     $scope.startGame = function (id) {
@@ -62,17 +90,24 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
         if (!pathToPage) {
             pathToPage = "quoridor.html"
         }
-        console.log("try to load game page", pathToPage)
         if ($scope.joined) {
             $scope.joined.playing = true
             $scope.gamePage = pathToPage
         }
+        console.log("load page", pathToPage)
     }
 
     $scope.canShowGamePage = function () {
         return $scope.joined && $scope.joined.playing == true && $scope.gamePage
     }
 
+    $scope.log = function (msg) {
+        console.log(msg)
+    }
+}]);
+
+
+grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     // Socket
     var socks = {}
     socks.REGISTER = "register"
@@ -83,26 +118,31 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
 
     socks.START_GAME = "start_game"
     socks.UPDATE_DATA = "update_data"
+    socks.GET_DATA = "get_data"
+    socks.PLAYING = "playing"
+    socks.PLAYER_ACTION = "player_action"
 
-    socks.sock = new SockJS(':8081/grouplay')
-    socks.sock.onopen = function () {
-        console.log("socket opened")
-        var name = $scope.name
-        if (name && name != '') {
-            socks.register(name)
-        } else {
-            askForName()
+    socks.init = function () {
+        socks.sock = new SockJS(':8081/grouplay')
+        socks.sock.onopen = function () {
+            console.log("socket opened")
+            var name = $scope.name
+            if (name && name != '') {
+                socks.register(name)
+            } else {
+                askForName()
+            }
         }
-    }
 
-    socks.sock.onmessage = function (e) {
-        if (e.data) {
-            var json = JSON.parse(e.data)
-            socks.receiveMessage(json)
+        socks.sock.onmessage = function (e) {
+            if (e.data) {
+                var json = JSON.parse(e.data)
+                $interval(socks.receiveMessage(json), 0, 1)
+            }
         }
-    }
-    socks.sock.onclose = function () {
-        console.log("socket close")
+        socks.sock.onclose = function () {
+            console.log("socket close")
+        }
     }
 
     socks.sendMessage = function (cmd, msg, confirm) {
@@ -116,8 +156,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
     }
 
     socks.receiveMessage = function (json) {
-        console.log("receive :", json.cmd, "confirm :", json.confirm)
-        console.log("message body :", json.msg)
+        console.log("receive", json.cmd, "message body :", json.msg)
         var cmd = json.cmd
         var info
         if (json.msg) {
@@ -131,7 +170,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
             if (info.ok == false) {
                 $scope.errorMsg = info.msg
                 console.log("error message", info.msg)
-                $interval(showErrorMsg());
+                showErrorMsg()
                 if (cmd == this.REGISTER) {
                     askForName()
                 }
@@ -149,24 +188,28 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
             }
             case this.GROUP_UPDATE:
             {
-                socks.groupUpdate(info)
+                socks.onGroupUpdate(info)
+                break;
+            }
+            case this.PLAYING:
+            {
+                $scope.loadGamePage("quoridor.html")
                 break;
             }
             case this.START_GAME:
             {
-                $interval($scope.loadGamePage("quoridor.html"))
+                $scope.loadGamePage("quoridor.html")
                 break;
             }
             case this.UPDATE_DATA:
             {
                 if (!$scope.gamePage) {
-                    $interval(function () {
-                        if (!$scope.gamePage) {
-                            askForGameRestore()
-                        }
-                    }, 1000)
+                    askForGameRestore()
                 } else {
-
+                    console.log("data received", info)
+                    if ($scope.dataUpdateCallback) {
+                        $scope.dataUpdateCallback(info)
+                    }
                 }
                 break;
             }
@@ -206,7 +249,25 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', function ($scope, $
         }, false)
     }
 
-    socks.groupUpdate = function (info) {
-        $interval($scope.updateGroups(info));
+    socks.getGameData = function () {
+        this.sendMessage(this.GET_DATA, {}, false)
     }
+
+    socks.onGroupUpdate = function (info) {
+        $scope.updateGroups(info)
+    }
+    socks.playerAction = function (action, data) {
+        this.sendMessage(this.PLAYER_ACTION, {
+            action: action,
+            data: JSON.stringify(data)
+        }, false)
+    }
+
+    var $scope
+    socks.setScope = function (scope) {
+        $scope = scope
+        socks.init()
+    }
+
+    return socks
 }]);

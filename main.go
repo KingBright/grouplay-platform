@@ -11,6 +11,7 @@ func main() {
 	grouplay.RegisterCreator(quoridor.Creator)
 
 	http.Handle("/grouplay/", grouplay.NewHandler("/grouplay"))
+
 	http.Handle("/", http.FileServer(http.Dir("web/")))
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }

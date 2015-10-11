@@ -17,9 +17,14 @@
         max-height: 700px;
     }
 </style>
-
+<div id="quoridor"></div>
 <script>
-    quoridor.game.init(800, 600, "game_frame")
-
-    onDataUpdate(quoridor.game.data.updateData)
+    console.log("======================quoridor=======================")
+    onUpdateData = function (data) {
+        quoridor.game.data.updateData(data)
+    }
+    setDataSender = function(sender){
+        quoridor.game.data.send = sender
+    }
+    quoridor.game.initialized = false
 </script>
