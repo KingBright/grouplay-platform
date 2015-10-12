@@ -18,7 +18,8 @@ quoridor.game.graphics // object to draw graphics on
 quoridor.game.screen // Current state, gameScreen, welcomeScreen
 
 quoridor.game.arrow // indicates which player is now in action
-quoridor.game.playerPanelSprites = new Array() // players on play panel 
+quoridor.game.playerPanelSprites = new Array() // players on play panel
+quoridor.game.playerPanelText = new Array()
 
 quoridor.game.gamePanelSprites = new Array() // players on game panel
 quoridor.game.potentialSprites = new Array()
@@ -68,6 +69,11 @@ quoridor.game.data.updateData = function (data) {
 
         // Update active player
         quoridor.game.selectPlayer()
+
+        // Update wall left
+        foreach(this.playerData, function (item, index) {
+            quoridor.game.playerPanelText[index].setText(item.name + " : " + item.wallLeft)
+        })
     }
 
     // Update walls
@@ -76,7 +82,7 @@ quoridor.game.data.updateData = function (data) {
         quoridor.game.data.walls.push(quoridor.game.createWall(item))
     })
 
-    quoridor.game.init(860, 600, "quoridor")
+    quoridor.game.init(900, 600, "quoridor")
 };
 
 quoridor.game.init = function (w, h, id) {
@@ -557,9 +563,16 @@ quoridor.game.createPlayerPanel = function (game) {
     var playerPanelLeft = this.playerPanelLeft
     var playerPanelTop = this.playerPanelTop
     var playerNum = this.data.playerNum
+    var style = {font: "20px Arial", fill: "#fff", boundsAlignH: "left", boundsAlignV: "middle"};
+
     for (var i = 0; i < playerNum; i++) {
+        //icon
         var sprite = game.add.sprite(playerPanelLeft + 40, playerPanelTop + 40 * i, 'player_' + i)
+        //name
+        var name = game.add.text(0, 0, this.data.playerData[i].name + " : " + this.data.playerData[i].wallLeft, style);
+        name.setTextBounds(playerPanelLeft + 80, playerPanelTop + 40 * i, 50, 40);
         this.playerPanelSprites.push(sprite)
+        this.playerPanelText.push(name)
     }
 
     var currentPlayerIndex = this.data.currentIndex
@@ -574,7 +587,6 @@ quoridor.game.createGamePanel = function (game) {
     var yoffset = this.yoffset
 
     var cellNum = this.cellNum
-    var wallNum = this.wallNum
 
     var xborderWidth = xoffset * 2 + cellWidth * cellNum + wallWidth * (cellNum - 1)
     var yborderWidth = yoffset * 2 + cellWidth * cellNum + wallWidth * (cellNum - 1)

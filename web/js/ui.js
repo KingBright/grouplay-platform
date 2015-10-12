@@ -39,6 +39,9 @@ askForQuit = function () {
 showGameFinish = function() {
     $('#game_finish').modal('setting', {closable: false}).modal('show')
 }
+hostStop = function() {
+    $('#host_stop').modal('setting', {closable: false}).modal('show')
+}
 
 test = function () {
     console.log("test")

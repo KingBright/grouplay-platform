@@ -9,7 +9,7 @@
     <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/semantic-ui/2.1.4/semantic.js"></script>
     <script src="//cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
-    <title>Grouplay</title>
+    <title>Grouplay-platform v0.1</title>
     <style>
         #group_panel {
             height: 100%;
@@ -138,7 +138,7 @@
                          class="ui inverted green button">
                         Refresh
                     </div>
-                    <div ng-if="myGroup()" ng-click="askForQuit()"
+                    <div ng-if="myGroup()" onclick="askForQuit()"
                          class="ui inverted red button">Quit
                     </div>
                 </div>
@@ -192,16 +192,16 @@
         <div class="ui cancel button">Cancel</div>
     </div>
 </div>
-<!-- Restore game dialog -->
+<!-- quit game dialog -->
 <div id="quit_game" class="ui small modal">
     <div class="header">
         Quit the Game
     </div>
     <div class="content">
-        Are you sure to quit?
+        Are you sure to stop the game?
     </div>
     <div class="actions">
-        <div ng-click="askForQuit()" class="ui approve button">Yes</div>
+        <div ng-click="quitGame()" class="ui approve button">Yes</div>
         <div class="ui cancel button">No</div>
     </div>
 </div>
@@ -215,6 +215,18 @@
     </div>
     <div class="actions">
         <div ng-click="quitGame()" class="ui approve button">OK</div>
+    </div>
+</div>
+<!-- Host stop game dialog -->
+<div id="host_stop" class="ui small modal">
+    <div class="header">
+        Game Stopped
+    </div>
+    <div class="content">
+        The game stopped by host.
+    </div>
+    <div class="actions">
+        <div ng-click="quitGame()" class="ui approve button">Got it</div>
     </div>
 </div>
 <!-- Create group dialog -->

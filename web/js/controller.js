@@ -133,6 +133,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     socks.PLAYER_ACTION = "player_action"
     socks.QUIT_GAME = "quit_game"
     socks.GAME_FINISH = "game_finish"
+    socks.HOST_STOP = "host_stop"
 
     socks.init = function () {
         socks.sock = new SockJS(':8081/grouplay')
@@ -224,6 +225,11 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             case this.GAME_FINISH:
             {
                 showGameFinish()
+                break;
+            }
+            case this.HOST_STOP:
+            {
+                hostStop()
                 break;
             }
         }
