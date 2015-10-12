@@ -10,16 +10,6 @@ showExit = function () {
     $('#exit_group').modal('show')
 }
 
-checkCreateOptions = function () {
-    var value = $('#player_number').dropdown('get value')
-    var checked = $('#allow_spectators').checkbox('is checked')
-    console.log("value set", value, "checked", checked)
-    return {
-        max: value,
-        allowSpectator: checked
-    }
-}
-
 showErrorMsg = function () {
     $('#error_msg').modal('show')
 }

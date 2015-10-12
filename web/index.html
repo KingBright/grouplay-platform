@@ -119,7 +119,7 @@
 
                 <div class="item">
                     <!-- Create group button -->
-                    <div onclick="showCreate()" class="fluid ui inverted bottom attached teal button">Create
+                    <div ng-click="getGameList()" class="fluid ui inverted bottom attached teal button">Create
                         Group
                     </div>
                 </div>
@@ -233,21 +233,26 @@
 <div id="create_group" class="ui small modal">
     <div class="header">Create a Group</div>
     <div class="content">
-        Please set max player number
-        <select id="player_number" class="ui dropdown">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
+        Please select a game
+        <select ng-model="game" ng-options="game.name for game in gameList" class="ui dropdown">
         </select>
 
         <div class="ui divider"></div>
-        <div id="allow_spectators" class="ui checked checkbox">
-            <input type="checkbox" checked="">
+
+        Please set max player number
+        <select ng-model="playerNumber" ng-options="number as number for number in game.supportPlayer"
+                class="ui dropdown">
+        </select>
+
+        <div class="ui divider"></div>
+
+        <div class="ui checked checkbox">
+            <input ng-model="allowSpectator" type="checkbox">
             <label>Allow spectators</label>
         </div>
     </div>
     <div class="actions">
-        <div ng-click="createGroup()" class="ui approve button">Create</div>
+        <div ng-if="couldCreate()" ng-click="createGroup()" class="ui approve button">Create</div>
         <div class="ui cancel button">Cancel</div>
     </div>
 </div>

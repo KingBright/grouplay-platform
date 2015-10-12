@@ -8,7 +8,13 @@ import (
 )
 
 func main() {
-	grouplay.RegisterCreator(quoridor.Creator)
+	// register for quoridor
+	grouplay.RegisterGame(grouplay.Game{
+		Name:          "quoridor",
+		Url:           "quoridor.html",
+		Rule:          "https://en.wikipedia.org/wiki/Quoridor",
+		SupportPlayer: []int{2, 3, 4},
+	}, quoridor.Creator)
 
 	http.Handle("/grouplay/", grouplay.NewHandler("/grouplay"))
 

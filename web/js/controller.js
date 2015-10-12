@@ -8,9 +8,16 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
     $scope.myInfo
     $scope.name = Cookies.get("name")
     $scope.errorMsg = ""
+
+    $scope.gameList
+    $scope.game
+    $scope.playerNumber
+    $scope.allowSpectator = true
+
     $scope.updateGroups = function (info) {
         if (info.joined && info.joined != 'null') {
             $scope.joined = info.joined
+            $scope.game = info.joined.game
         } else {
             $scope.joined = null
         }
@@ -36,9 +43,31 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
 
     $scope.createGroup = function () {
         console.log("createGroup")
-        var options = checkCreateOptions()
-        console.log("config", options)
-        socks.createGroup(options.max, options.allowSpectator)
+        socks.createGroup($scope.game.name, parseInt($scope.playerNumber), $scope.allowSpectator)
+    }
+
+    $scope.couldCreate = function () {
+        if (!$scope.game) {
+            console.log("game not set")
+            return false
+        }
+        console.log("game", $scope.game)
+        if (!$scope.game.name) {
+            console.log("game name not set")
+            return false
+        }
+        console.log("game name", $scope.game.name)
+        if (!$scope.playerNumber) {
+            console.log("number empty")
+            return false
+        }
+        console.log("playerNumber", $scope.playerNumber)
+        if (parseInt($scope.playerNumber) < 2) {
+            console.log("player number not valid")
+            return false
+        }
+        console.log("playerNumber", parseInt($scope.playerNumber))
+        return true
     }
 
     $scope.exitGroup = function () {
@@ -89,16 +118,14 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
         socks.startGame(id)
     }
 
-    $scope.loadGamePage = function (pathToPage) {
-        //TODO for now
-        if (!pathToPage) {
-            pathToPage = "quoridor.html"
-        }
+    $scope.loadGamePage = function () {
         if ($scope.joined) {
             $scope.joined.playing = true
-            $scope.gamePage = pathToPage
+            if ($scope.game && $scope.game.url) {
+                $scope.gamePage = $scope.game.url
+                console.log("load page", $scope.game.url)
+            }
         }
-        console.log("load page", pathToPage)
     }
 
     $scope.canShowGamePage = function () {
@@ -111,6 +138,10 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
 
     $scope.quitGame = function () {
         socks.quitGame()
+    }
+
+    $scope.getGameList = function () {
+        socks.getGameList()
     }
 
     $scope.log = function (msg) {
@@ -136,6 +167,8 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     socks.QUIT_GAME = "quit_game"
     socks.GAME_FINISH = "game_finish"
     socks.HOST_STOP = "host_stop"
+
+    socks.GET_GAME_LIST = "get_game_list"
 
     socks.init = function () {
         socks.sock = new SockJS(':8081/grouplay')
@@ -214,7 +247,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             case this.START_GAME:
             {
                 $scope.myInfo.ingame = true
-                $scope.loadGamePage("quoridor.html")
+                $scope.loadGamePage()
                 break;
             }
             case this.UPDATE_DATA:
@@ -235,6 +268,12 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
                 hostStop()
                 break;
             }
+            case this.GET_GAME_LIST:
+            {
+                $scope.gameList = info
+                showCreate()
+                break;
+            }
         }
     }
     socks.register = function (name) {
@@ -247,8 +286,9 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     socks.getGroupList = function () {
         this.sendMessage(this.GROUP_UPDATE, "", false)
     }
-    socks.createGroup = function (max, allowSpectator) {
+    socks.createGroup = function (game, max, allowSpectator) {
         this.sendMessage(this.CREATE_GROUP, {
+            game: game,
             max: parseInt(max),
             allowSpectator: allowSpectator
         }, false)
@@ -273,6 +313,10 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
 
     socks.getGameData = function () {
         this.sendMessage(this.GET_DATA, {}, false)
+    }
+
+    socks.getGameList = function () {
+        this.sendMessage(this.GET_GAME_LIST, {}, false)
     }
 
     socks.onGroupUpdate = function (info) {
