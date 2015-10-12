@@ -33,7 +33,9 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
     }
 
     $scope.createGroup = function () {
+        console.log("createGroup")
         var options = checkCreateOptions()
+        console.log("config", options)
         socks.createGroup(options.max, options.allowSpectator)
     }
 
@@ -105,8 +107,8 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
         socks.getGameData()
     }
 
-    $scope.askForQuit = function () {
-        socks.askForQuit()
+    $scope.quitGame = function () {
+        socks.quitGame()
     }
 
     $scope.log = function (msg) {
@@ -274,7 +276,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
         }, false)
     }
 
-    socks.askForQuit = function () {
+    socks.quitGame = function () {
         this.sendMessage(this.QUIT_GAME, {}, false)
     }
 

@@ -35,14 +35,12 @@
                                  class="ui inverted green button">
                                 Start
                             </div>
-                            <div ng-if="myGroup()&&!canStart()" ng-click="startGame(joined.id)"
-                                 class="ui inverted green disabled button">Start
+                            <div ng-if="myGroup()&&!canStart()" class="ui inverted green disabled button">Start
                             </div>
                             <div ng-if="canExit()" onclick="showExit()" class="ui inverted red button">
                                 Exit
                             </div>
-                            <div ng-if="!canExit()" onclick="showExit()"
-                                 class="ui inverted red disabled button">Exit
+                            <div ng-if="!canExit()" class="ui inverted red disabled button">Exit
                             </div>
                         </div>
                     </div>
@@ -59,19 +57,6 @@
                 <div ng-if="!joined" class="content animate-if">
                     You haven't joined a group yet.
                 </div>
-                <!-- Exit group dialog -->
-                <div id="exit_group" class="ui small modal">
-                    <div class="header">Confirm to Exit</div>
-                    <div class="content">
-                        <div class="description">
-                            <p>Are you sure you want to exit the group?</p>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <div ng-click="exitGroup()" class="ui approve button">Exit</div>
-                        <div class="ui cancel button">Cancel</div>
-                    </div>
-                </div>
             </div>
 
             <!-- Waiting -->
@@ -87,8 +72,7 @@
                             <div ng-switch-when="true" ng-click="joinGroup(item.id)"
                                  class="ui inverted blue button">Join
                             </div>
-                            <div ng-switch-when="false" ng-click="joinGroup(item.id)"
-                                 class="ui inverted blue disabled button">Join
+                            <div ng-switch-when="false" class="ui inverted blue disabled button">Join
                             </div>
                         </div>
                     </div>
@@ -116,8 +100,7 @@
                             <div ng-switch-when="true" ng-click="spectateGroup(item.id)"
                                  class="ui inverted purple button">Spectate
                             </div>
-                            <div ng-switch-when="false" ng-click="spectateGroup(item.id)"
-                                 class="ui inverted purple disabled button">Spectate
+                            <div ng-switch-when="false" class="ui inverted purple disabled button">Spectate
                             </div>
                         </div>
                     </div>
@@ -139,68 +122,6 @@
                     <div onclick="showCreate()" class="fluid ui inverted bottom attached teal button">Create
                         Group
                     </div>
-                    <!-- Create group dialog -->
-                    <div id="create_group" class="ui small modal">
-                        <div class="header">Create a Group</div>
-                        <div class="content">
-                            Please set max player number
-                            <select id="player_number" class="ui dropdown">
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-
-                            <div class="ui divider"></div>
-                            <div id="allow_spectators" class="ui checked checkbox">
-                                <input type="checkbox" checked="">
-                                <label>Allow spectators</label>
-                            </div>
-                        </div>
-                        <div class="actions">
-                            <div ng-click="createGroup()" class="ui approve button">Create</div>
-                            <div class="ui cancel button">Cancel</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Error dialog -->
-            <div id="error_msg" class="ui small modal">
-                <div class="header">
-                    Error Message
-                </div>
-                <div class="content">
-                    <div class="description">
-                        {{errorMsg}}
-                    </div>
-                </div>
-                <div class="actions">
-                    <div class="ui approve button">OK</div>
-                </div>
-            </div>
-            <!-- Set name dialog -->
-            <div id="set_name" class="ui small modal">
-                <div class="header">
-                    Set a Name
-                </div>
-                <div class="content">
-                    <div class="ui input fluid focus">
-                        <input id="name" type="text" ng-model="player_name" placeholder="Input your name here...">
-                    </div>
-                </div>
-                <div ng-if="player_name&&player_name!=''" class="actions">
-                    <div ng-click="register(player_name)" class="ui approve button">OK</div>
-                </div>
-            </div>
-            <!-- Restore game dialog -->
-            <div id="restore_game" class="ui small modal">
-                <div class="header">
-                    Set a Name
-                </div>
-                <div class="content">
-                    A game is in progress. Restore it!
-                </div>
-                <div ng-if="name&&name!=''" class="actions">
-                    <div ng-click="loadGamePage()" class="ui approve button">OK</div>
                 </div>
             </div>
         </div>
@@ -230,30 +151,106 @@
             </ng-include>
         </div>
     </div>
-    <!-- Restore game dialog -->
-    <div id="quit_game" class="ui small modal">
-        <div class="header">
-            Quit the Game
-        </div>
-        <div class="content">
-            Are you sure to quit?
-        </div>
-        <div class="actions">
-            <div ng-click="askForQuit()" class="ui approve button">Yes</div>
-            <div class="ui cancel button">No</div>
+</div>
+
+<!-- Set name dialog -->
+<div id="set_name" class="ui small modal">
+    <div class="header">
+        Set a Name
+    </div>
+    <div class="content">
+        <div class="ui input fluid focus">
+            <input id="name" type="text" ng-model="player_name" placeholder="Input your name here...">
         </div>
     </div>
-    <!-- Game finish dialog -->
-    <div id="game_finish" class="ui small modal">
-        <div class="header">
-            Game Finished
+    <div ng-if="player_name&&player_name!=''" class="actions">
+        <div ng-click="register(player_name)" class="ui approve button">OK</div>
+    </div>
+</div>
+<!-- Restore game dialog -->
+<div id="restore_game" class="ui small modal">
+    <div class="header">
+        Set a Name
+    </div>
+    <div class="content">
+        A game is in progress. Restore it!
+    </div>
+    <div ng-if="name&&name!=''" class="actions">
+        <div ng-click="loadGamePage()" class="ui approve button">OK</div>
+    </div>
+</div>
+<!-- Exit group dialog -->
+<div id="exit_group" class="ui small modal">
+    <div class="header">Confirm to Exit</div>
+    <div class="content">
+        <div class="description">
+            <p>Are you sure you want to exit the group?</p>
         </div>
-        <div class="content">
-            The game is finished, press OK to quit.
+    </div>
+    <div class="actions">
+        <div ng-click="exitGroup()" class="ui approve button">Exit</div>
+        <div class="ui cancel button">Cancel</div>
+    </div>
+</div>
+<!-- Restore game dialog -->
+<div id="quit_game" class="ui small modal">
+    <div class="header">
+        Quit the Game
+    </div>
+    <div class="content">
+        Are you sure to quit?
+    </div>
+    <div class="actions">
+        <div ng-click="askForQuit()" class="ui approve button">Yes</div>
+        <div class="ui cancel button">No</div>
+    </div>
+</div>
+<!-- Game finish dialog -->
+<div id="game_finish" class="ui small modal">
+    <div class="header">
+        Game Finished
+    </div>
+    <div class="content">
+        The game is finished, press OK to quit.
+    </div>
+    <div class="actions">
+        <div ng-click="quitGame()" class="ui approve button">OK</div>
+    </div>
+</div>
+<!-- Create group dialog -->
+<div id="create_group" class="ui small modal">
+    <div class="header">Create a Group</div>
+    <div class="content">
+        Please set max player number
+        <select id="player_number" class="ui dropdown">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+
+        <div class="ui divider"></div>
+        <div id="allow_spectators" class="ui checked checkbox">
+            <input type="checkbox" checked="">
+            <label>Allow spectators</label>
         </div>
-        <div class="actions">
-            <div ng-click="askForQuit()" class="ui approve button">OK</div>
+    </div>
+    <div class="actions">
+        <div ng-click="createGroup()" class="ui approve button">Create</div>
+        <div class="ui cancel button">Cancel</div>
+    </div>
+</div>
+<!-- Error dialog -->
+<div id="error_msg" class="ui small modal">
+    <div class="header">
+        Error Message
+    </div>
+    <div class="content">
+        <div class="description">
+            {{errorMsg}}
         </div>
+    </div>
+    <div class="actions">
+        <div class="ui approve button">OK</div>
     </div>
 </div>
 
