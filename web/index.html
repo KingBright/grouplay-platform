@@ -52,7 +52,7 @@
                     <div class="ui mini black label">
                         <i class="eye icon"></i> {{groups.joined.spectators}}
                     </div>
-                    <div ng-if="joined.playing" class="ui horizontal green label">Playing</div>
+                    <div ng-if="game" class="ui horizontal green label">{{game.name}}</div>
                 </div>
                 <div ng-if="!joined" class="content animate-if">
                     You haven't joined a group yet.
@@ -84,6 +84,7 @@
                     <div class="ui mini black label">
                         <i class="eye icon"></i> {{item.spectators}}
                     </div>
+                    <div ng-if="game" class="ui horizontal green label">{{game.name}}</div>
                 </div>
                 <div ng-if="!groups.waiting||groups.waiting.length==0" class="content animate-if">
                     No waiting groups found.
@@ -112,6 +113,7 @@
                     <div class="ui mini black label">
                         <i class="eye icon"></i> {{item.spectators}}
                     </div>
+                    <div ng-if="game" class="ui horizontal green label">{{game.name}}</div>
                 </div>
                 <div ng-if="!groups.playing||groups.playing.length==0" class="content animate-if">
                     No playing groups found.
