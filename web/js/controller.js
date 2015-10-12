@@ -5,6 +5,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
 
     $scope.groups = {}
     $scope.joined
+    $scope.myInfo
     $scope.name = Cookies.get("name")
     $scope.errorMsg = ""
     $scope.updateGroups = function (info) {
@@ -13,6 +14,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
         } else {
             $scope.joined = null
         }
+        $scope.myInfo = info.myInfo
         $scope.groups = info
     }
 
@@ -100,7 +102,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
     }
 
     $scope.canShowGamePage = function () {
-        return $scope.joined && $scope.joined.playing == true && $scope.gamePage
+        return $scope.joined && $scope.joined.playing == true && $scope.myInfo.ingame == true && $scope.gamePage
     }
 
     $scope.refreshGameData = function () {
@@ -211,6 +213,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             }
             case this.START_GAME:
             {
+                $scope.myInfo.ingame = true
                 $scope.loadGamePage("quoridor.html")
                 break;
             }
