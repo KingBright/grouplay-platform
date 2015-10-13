@@ -643,41 +643,41 @@ quoridor.game.createGamePanel = function (game) {
 
         this.data.panelData[point.x][point.y] = this.data.PLAYER
     }
-    //blue   49  162 142 31A2F2 top
-    //green  68  137 26  44891A right
-    //orange 235 137 49  EB8931 bottom
-    //pink   224 111 139 E06F8B left
-    var blue = new Phaser.Polygon();
-    blue.setTo([new Phaser.Point(0, 0), new Phaser.Point(quoridor.game.HEIGHT, 0), new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset), new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)]);
-    graphics = game.add.graphics(0, 0);
-    graphics.alpha = 0.4
-    graphics.beginFill(0x31A2F2);
-    graphics.drawPolygon(blue.points);
-    graphics.endFill();
+    //blue   49  162 142 0x31A2F2
+    //pink   224 111 139 0xE06F8B
+    //orange 235 137 49  0xEB8931
+    //green  68  137 26  0x44891A
+    var colors = [0x31A2F2, 0x44891A, 0xE06F8B, 0xEB8931]
 
-    var green = new Phaser.Polygon();
-    green.setTo([new Phaser.Point(quoridor.game.HEIGHT, 0), new Phaser.Point(quoridor.game.HEIGHT, quoridor.game.HEIGHT), new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset), new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset)]);
-    graphics = game.add.graphics(0, 0);
-    graphics.alpha = 0.4
-    graphics.beginFill(0x44891A);
-    graphics.drawPolygon(green.points);
-    graphics.endFill();
+    var sides = [[new Phaser.Point(0, 0),
+        new Phaser.Point(quoridor.game.HEIGHT, 0),
+        new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset),
+        new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)],
+        [new Phaser.Point(quoridor.game.HEIGHT, 0),
+            new Phaser.Point(quoridor.game.HEIGHT, quoridor.game.HEIGHT),
+            new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset),
+            new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset)],
+        [new Phaser.Point(0, 0),
+            new Phaser.Point(0, quoridor.game.HEIGHT),
+            new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset),
+            new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)],
+        [new Phaser.Point(0, quoridor.game.HEIGHT),
+            new Phaser.Point(quoridor.game.HEIGHT, quoridor.game.HEIGHT),
+            new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset),
+            new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset)],
+    ]
 
-    var orange = new Phaser.Polygon();
-    orange.setTo([new Phaser.Point(0, quoridor.game.HEIGHT), new Phaser.Point(quoridor.game.HEIGHT, quoridor.game.HEIGHT), new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset), new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset)]);
-    graphics = game.add.graphics(0, 0);
-    graphics.alpha = 0.4
-    graphics.beginFill(0xEB8931);
-    graphics.drawPolygon(orange.points);
-    graphics.endFill();
-
-    var pink = new Phaser.Polygon();
-    pink.setTo([new Phaser.Point(0, 0), new Phaser.Point(0, quoridor.game.HEIGHT), new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset), new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)]);
-    graphics = game.add.graphics(0, 0);
-    graphics.alpha = 0.4
-    graphics.beginFill(0xE06F8B);
-    graphics.drawPolygon(pink.points);
-    graphics.endFill();
+    for (var i = 0; i < quoridor.game.data.playerNum; i++) {
+        var polygon = new Phaser.Polygon();
+        polygon.setTo(sides[i]);
+        graphics = game.add.graphics(0, 0);
+        if (i == 1 && quoridor.game.data.playerNum == 2) {
+            i = 2
+        }
+        graphics.beginFill(colors[i]);
+        graphics.drawPolygon(polygon.points);
+        graphics.endFill();
+    }
 }
 
 // Get coordinate from position on game panel

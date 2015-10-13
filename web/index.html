@@ -9,7 +9,7 @@
     <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/semantic-ui/2.1.4/semantic.js"></script>
     <script src="//cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
-    <title>Grouplay-platform v0.1</title>
+    <title>Grouplay-platform v0.2</title>
     <style>
         #group_panel {
             height: 100%;
@@ -20,8 +20,8 @@
 
 <body ng-app="grouplay" ng-controller="grouplay-ctrl">
 <div ng-if="!canShowGamePage()" id="group_panel" class="ui inverted segment">
-    <div class="ui centered grid">
-        <div class="eight wide column">
+    <div class="ui grid">
+        <div class="four wide column">
             <div class="ui huge olive header">Grouplay</div>
             <!-- Participating -->
             <h3 class="ui yellow inverted header">My Group</h3>
@@ -127,14 +127,31 @@
                 </div>
             </div>
         </div>
+        // group panel
+        <div class="six wide column">
+
+        </div>
+        // message board
+        <div class="six wide column">
+
+        </div>
     </div>
 </div>
 
 <div ng-if="canShowGamePage()" id="game_panel" class="ui segment">
     <div class="ui inverted segment">
         <div class="ui grid">
+            <div class="left floated four wide column">
+                <!-- help button -->
+                <div ng-if="game.rule" class="ui buttons">
+                    <div ng-click="loadRule()"
+                         class="ui inverted yellow button">
+                        Help
+                    </div>
+                </div>
+            </div>
             <div class="right floated four wide column">
-                <!-- Spectate button -->
+                <!-- refresh & quit buttons -->
                 <div class="ui buttons">
                     <div ng-click="refreshGameData()"
                          class="ui inverted green button">

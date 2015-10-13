@@ -1,6 +1,6 @@
 var grouplay = angular.module('grouplay', []);
 
-grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($scope, socks) {
+grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', function ($scope, $interval, socks) {
     socks.setScope($scope)
 
     $scope.groups = {}
@@ -81,6 +81,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
 
     $scope.spectateGroup = function (id) {
         console.log("spectate group", id)
+        socks.spectateGame(id)
     }
 
     $scope.dataUpdateCallback
@@ -129,7 +130,13 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
     }
 
     $scope.canShowGamePage = function () {
-        return $scope.joined && $scope.joined.playing == true && $scope.myInfo.ingame == true && $scope.gamePage
+        // self in game
+        if ($scope.joined && $scope.joined.playing == true && $scope.myInfo.ingame == true && $scope.gamePage) {
+            return true
+        }
+        // you are spectating a game
+
+        return false
     }
 
     $scope.refreshGameData = function () {
@@ -142,6 +149,10 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
 
     $scope.getGameList = function () {
         socks.getGameList()
+    }
+
+    $scope.loadRule = function () {
+        window.open($scope.game.rule)
     }
 
     $scope.log = function (msg) {
@@ -331,6 +342,10 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
 
     socks.quitGame = function () {
         this.sendMessage(this.QUIT_GAME, {}, false)
+    }
+
+    socks.spectateGame = function () {
+
     }
 
     var $scope
