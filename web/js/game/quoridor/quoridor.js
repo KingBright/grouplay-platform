@@ -643,8 +643,8 @@ quoridor.game.createGamePanel = function (game) {
 
         this.data.panelData[point.x][point.y] = this.data.PLAYER
     }
-    //blue   49  162 142 0x31A2F2
-    //pink   224 111 139 0xE06F8B
+    //blue   49  162 142 0x31A2F2 //top
+    //pink   224 111 139 0xE06F8B //left
     //orange 235 137 49  0xEB8931
     //green  68  137 26  0x44891A
     var colors = [0x31A2F2, 0x44891A, 0xE06F8B, 0xEB8931]
@@ -652,29 +652,34 @@ quoridor.game.createGamePanel = function (game) {
     var sides = [[new Phaser.Point(0, 0),
         new Phaser.Point(quoridor.game.HEIGHT, 0),
         new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset),
-        new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)],
+        new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)],//top
         [new Phaser.Point(quoridor.game.HEIGHT, 0),
             new Phaser.Point(quoridor.game.HEIGHT, quoridor.game.HEIGHT),
             new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset),
-            new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset)],
+            new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.yoffset)],//right
         [new Phaser.Point(0, 0),
             new Phaser.Point(0, quoridor.game.HEIGHT),
             new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset),
-            new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)],
+            new Phaser.Point(quoridor.game.xoffset, quoridor.game.yoffset)],//left
         [new Phaser.Point(0, quoridor.game.HEIGHT),
             new Phaser.Point(quoridor.game.HEIGHT, quoridor.game.HEIGHT),
             new Phaser.Point(quoridor.game.HEIGHT - quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset),
-            new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset)],
+            new Phaser.Point(quoridor.game.xoffset, quoridor.game.HEIGHT - quoridor.game.yoffset)],//bottom
     ]
 
     for (var i = 0; i < quoridor.game.data.playerNum; i++) {
         var polygon = new Phaser.Polygon();
-        polygon.setTo(sides[i]);
         graphics = game.add.graphics(0, 0);
-        if (i == 1 && quoridor.game.data.playerNum == 2) {
-            i = 2
+        if (i == 1 && i == quoridor.game.data.playerNum - 1) {
+            graphics.beginFill(colors[2]);
+        } else {
+            graphics.beginFill(colors[i]);
         }
-        graphics.beginFill(colors[i]);
+        if (i == 1 && i == quoridor.game.data.playerNum - 1) {
+            polygon.setTo(sides[3]);
+        } else {
+            polygon.setTo(sides[i]);
+        }
         graphics.drawPolygon(polygon.points);
         graphics.endFill();
     }
@@ -799,7 +804,7 @@ quoridor.game.createWall = function (wallInfo) {
 
 // Calculate the pending wall position. Show a pending wall on the right position
 quoridor.game.createPendingWall = function (x, y) {
-    if (this.data.playerData[this.data.myIndex].wallLeft <= 0) {
+    if (this.data.myIndex <= 0 && this.data.playerData[this.data.myIndex].wallLeft <= 0) {
         return
     }
     var cellWidth = this.cellWidth

@@ -143,6 +143,9 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
         socks.getGameData()
     }
 
+    $scope.stopGame = function () {
+        socks.stopGame()
+    }
     $scope.quitGame = function () {
         socks.quitGame()
     }
@@ -175,8 +178,9 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     socks.GET_DATA = "get_data"
     socks.PLAYING = "playing"
     socks.PLAYER_ACTION = "player_action"
+    socks.STOP_GAME = "stop_game"
     socks.QUIT_GAME = "quit_game"
-    socks.GAME_FINISH = "game_finish"
+    socks.GAME_FINISHED = "game_finished"
     socks.HOST_STOP = "host_stop"
 
     socks.GET_GAME_LIST = "get_game_list"
@@ -269,7 +273,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
                 }
                 break;
             }
-            case this.GAME_FINISH:
+            case this.GAME_FINISHED:
             {
                 showGameFinish()
                 break;
@@ -338,6 +342,10 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             action: action,
             data: JSON.stringify(data)
         }, false)
+    }
+
+    socks.stopGame = function () {
+        this.sendMessage(this.STOP_GAME, {}, false)
     }
 
     socks.quitGame = function () {

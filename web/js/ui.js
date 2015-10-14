@@ -22,8 +22,8 @@ askForGameRestore = function () {
     $('#restore_game').modal('setting', {closable: false}).modal('show')
 }
 
-askForQuit = function () {
-    $('#quit_game').modal('setting', {closable: false}).modal('show')
+askForStop = function () {
+    $('#stop_game').modal('setting', {closable: false}).modal('show')
 }
 
 showGameFinish = function() {
