@@ -23,42 +23,6 @@
     <div class="ui huge olive header">Grouplay</div>
     <div class="ui grid">
         <div class="five wide column">
-            <!-- Participating -->
-            <h3 class="ui yellow inverted header">My Group</h3>
-
-            <div class="ui inverted relaxed divided list">
-                <div ng-if="joined" class="item">
-                    <div class="right floated content">
-                        <!-- Start game button -->
-                        <div class="ui buttons">
-                            <div ng-if="myGroup()&&canStart()" ng-click="startGame(joined.id)"
-                                 class="ui inverted green button">
-                                Start
-                            </div>
-                            <div ng-if="myGroup()&&!canStart()" class="ui inverted green disabled button">Start
-                            </div>
-                            <div ng-if="canExit()" onclick="showExit()" class="ui inverted red button">
-                                Exit
-                            </div>
-                            <div ng-if="!canExit()" class="ui inverted red disabled button">Exit
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="ui grey inverted header"> Hosted by {{groups.joined.host}}</h5>
-
-                    <div class="ui mini black label">
-                        <i class="gamepad icon"></i> {{groups.joined.current}} / {{groups.joined.limit}}
-                    </div>
-                    <div class="ui mini black label">
-                        <i class="eye icon"></i> {{groups.joined.spectators}}
-                    </div>
-                    <div ng-if="game" class="ui horizontal green label">{{game.name}}</div>
-                </div>
-                <div ng-if="!joined" class="content animate-if">
-                    You haven't joined a group yet.
-                </div>
-            </div>
-
             <!-- Waiting -->
             <h3 class="ui yellow inverted header">Waiting Groups</h3>
 
@@ -76,13 +40,13 @@
                             </div>
                         </div>
                     </div>
-                    <h5 class="ui grey inverted header">Hosted by {{item.host}}</h5>
+                    <h5 class="ui grey inverted header">Hosted by {{item.host.name}}</h5>
 
                     <div class="ui mini black label">
-                        <i class="gamepad icon"></i> {{item.current}} / {{item.limit}}
+                        <i class="gamepad icon"></i> {{item.players.length}} / {{item.limit}}
                     </div>
                     <div class="ui mini black label">
-                        <i class="eye icon"></i> {{item.spectators}}
+                        <i class="eye icon"></i> {{item.spectators.length}}
                     </div>
                     <div ng-if="item.game" class="ui horizontal green label">{{item.game.name}}</div>
                 </div>
@@ -105,13 +69,13 @@
                             </div>
                         </div>
                     </div>
-                    <h5 class="ui grey inverted header">Hosted by {{item.host}}</h5>
+                    <h5 class="ui grey inverted header">Hosted by {{item.host.name}}</h5>
 
                     <div class="ui mini black label">
-                        <i class="gamepad icon"></i> {{item.current}} / {{item.limit}}
+                        <i class="gamepad icon"></i> {{item.players.length}} / {{item.limit}}
                     </div>
                     <div class="ui mini black label">
-                        <i class="eye icon"></i> {{item.spectators}}
+                        <i class="eye icon"></i> {{item.spectators.length}}
                     </div>
                     <div ng-if="item.game" class="ui horizontal green label">{{item.game.name}}</div>
                 </div>
@@ -127,9 +91,54 @@
                 </div>
             </div>
         </div>
+        <div class="ui hidden vertical divider">
+        </div>
         <!-- group panel -->
         <div class="six wide column">
+            <h3 class="ui orange inverted header">Joined Group</h3>
+            <!-- Group info -->
+            <div class="ui inverted relaxed divided list">
+                <div ng-if="joined" class="item">
+                    <div class="right floated content">
+                        <!-- Start game button -->
+                        <div class="ui buttons">
+                            <div ng-if="myGroup()&&canStart()" ng-click="startGame(joined.id)"
+                                 class="ui inverted green button">
+                                Start
+                            </div>
+                            <div ng-if="myGroup()&&!canStart()" class="ui inverted green disabled button">Start
+                            </div>
+                            <div ng-if="canExit()" onclick="showExit()" class="ui inverted red button">
+                                Exit
+                            </div>
+                            <div ng-if="!canExit()" class="ui inverted red disabled button">Exit
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="ui grey inverted header"> Hosted by {{joined.host.name}}</h5>
 
+                    <div class="ui mini black label">
+                        <i class="gamepad icon"></i> {{joined.players.length}} / {{joined.limit}}
+                    </div>
+                    <div class="ui mini black label">
+                        <i class="eye icon"></i> {{joined.spectators.length}}
+                    </div>
+                    <div ng-if="game" class="ui horizontal green label">{{game.name}}</div>
+                </div>
+                <div ng-if="!joined" class="content animate-if">
+                    You haven't joined a group yet.
+                </div>
+            </div>
+            <!-- Member list -->
+            <h5 ng-if="joined" class="ui orange inverted header">Members</h5>
+
+            <div ng-if="joined" class="ui inverted relaxed horizontal list animate-if">
+                <div class="item" ng-repeat="item in joined.players">
+                    <div class="ui mini black label">
+                        <i class="user icon"></i> {{item.name}}
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- message board -->
         <div class="five wide column">

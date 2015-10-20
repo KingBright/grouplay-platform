@@ -11,7 +11,6 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
 
     $scope.gameList
     $scope.game
-    $scope.playerNumber
     $scope.allowSpectator = true
 
     $scope.updateGroups = function (info) {
@@ -26,7 +25,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
     }
 
     $scope.myGroup = function () {
-        return $scope.joined.host == $scope.name
+        return $scope.joined && $scope.joined.host.name == $scope.name
     }
 
     $scope.canExit = function () {
@@ -34,11 +33,11 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
     }
 
     $scope.canStart = function () {
-        return $scope.joined.host == $scope.name && $scope.joined.current > 1 && $scope.joined.playing == false
+        return $scope.joined && $scope.joined.players && $scope.joined.players.length > 1 && $scope.joined.playing == false
     }
 
     $scope.canJoin = function (group) {
-        return group.playing == false && group.current < group.limit && !$scope.joined
+        return group.playing == false && group.players.length < group.limit && !$scope.joined
     }
 
     $scope.createGroup = function () {
@@ -48,25 +47,17 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
 
     $scope.couldCreate = function () {
         if (!$scope.game) {
-            console.log("game not set")
             return false
         }
-        console.log("game", $scope.game)
         if (!$scope.game.name) {
-            console.log("game name not set")
             return false
         }
-        console.log("game name", $scope.game.name)
         if (!$scope.playerNumber) {
-            console.log("number empty")
             return false
         }
-        console.log("playerNumber", $scope.playerNumber)
         if (parseInt($scope.playerNumber) < 2) {
-            console.log("player number not valid")
             return false
         }
-        console.log("playerNumber", parseInt($scope.playerNumber))
         return true
     }
 
