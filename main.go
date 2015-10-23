@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/kingbright/grouplay"
-	"github.com/kingbright/grouplay/quoridor"
+	"github.com/kingbright/grouplay-platform/quoridor"
 	"log"
 	"net/http"
 )
