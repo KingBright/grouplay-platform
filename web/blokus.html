@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="js/game/blokus/pixi.min.js"></script>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+<script src="js/lib/utils.js"></script>
+<script src="js/lib/phaser.js"></script>
+<script src="js/game/blokus/blokus.js"></script>
+
 <style>
-    body {
+    #game_panel {
         background-image: url(img/game/bg.jpg);
         background-size: 150% auto;
         height: 100%;
@@ -20,41 +16,14 @@
         max-height: 700px;
     }
 </style>
-
+<div id="blokus"></div>
 <script>
-    var renderer = PIXI.autoDetectRenderer(600, 600, {backgroundColor: 0xffffff});
-    document.body.appendChild(renderer.view);
-
-    // create the root of the scene graph
-    var stage = new PIXI.Container();
-
-    // create a texture from an image path
-    var texture = PIXI.Texture.fromImage('_assets/basics/bunny.png');
-
-    // create a new Sprite using the texture
-    var bunny = new PIXI.Sprite(texture);
-
-    // center the sprite's anchor point
-    bunny.anchor.x = 0.5;
-    bunny.anchor.y = 0.5;
-
-    // move the sprite to the center of the screen
-    bunny.position.x = 200;
-    bunny.position.y = 150;
-
-    stage.addChild(bunny);
-
-    // start animating
-    animate();
-    function animate() {
-        requestAnimationFrame(animate);
-
-        // just for fun, let's rotate mr rabbit a little
-        bunny.rotation += 0.1;
-
-        // render the container
-        renderer.render(stage);
+    var blokus = new Blokus()
+    onUpdateData = function (data) {
+        blokus.updateData(data)
     }
+    setDataSender = function (sender) {
+        blokus.send = sender
+    }
+    quoridor.game.initialized = false
 </script>
-</body>
-</html>

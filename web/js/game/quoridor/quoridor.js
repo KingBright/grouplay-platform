@@ -84,15 +84,13 @@ quoridor.game.data.updateData = function (data) {
         quoridor.game.data.walls.push(quoridor.game.createWall(item))
     })
 
-    quoridor.game.init(quoridor.game.WIDTH, quoridor.game.HEIGHT, "quoridor")
+    if (quoridor.game.initialized == false) {
+        quoridor.game.init(quoridor.game.WIDTH, quoridor.game.HEIGHT, "quoridor")
+    }
 };
 
 quoridor.game.init = function (w, h, id) {
-    if (this.initialized == true) {
-        return
-    } else {
-        this.initialized = true
-    }
+    this.initialized = true
     this.width = w
     this.height = h
     var game = new Phaser.Game(w, h, Phaser.AUTO, id, {
