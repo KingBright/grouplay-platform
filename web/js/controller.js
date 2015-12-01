@@ -23,6 +23,10 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
         $scope.myInfo = info.myInfo
         $scope.groups = info
     }
+	
+	$scope.isSpectator = function () {
+        return $scope.joined && $scope.myInfo.index == 5
+    }
 
     $scope.myGroup = function () {
         return $scope.joined && $scope.joined.host.name == $scope.name
@@ -74,6 +78,10 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
         console.log("spectate group", id)
         socks.spectateGame(id)
     }
+	
+	$scope.stopSpectating = function () {
+		socks.stopSpectating($scope.joined.id)
+	}
 
     $scope.dataUpdateCallback
     // For game to register a callback
@@ -175,6 +183,9 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     socks.HOST_STOP = "host_stop"
 
     socks.GET_GAME_LIST = "get_game_list"
+    socks.SPECTATE_GAME = "spectate_game"
+	socks.STOP_SPECTATING = "stop_spectating"
+	
 
     socks.init = function () {
         socks.sock = new SockJS(':8081/grouplay')
@@ -280,6 +291,12 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
                 showCreate()
                 break;
             }
+            case this.SPECTATE_GAME:
+            {
+                $scope.myInfo.ingame = true
+                $scope.loadGamePage()
+                break;
+            }
         }
     }
     socks.register = function (name) {
@@ -334,6 +351,10 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             data: JSON.stringify(data)
         }, false)
     }
+	
+	socks.stopSpectating = function () {
+        this.sendMessage(this.STOP_SPECTATING, {}, false)
+    }
 
     socks.stopGame = function () {
         this.sendMessage(this.STOP_GAME, {}, false)
@@ -343,8 +364,10 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
         this.sendMessage(this.QUIT_GAME, {}, false)
     }
 
-    socks.spectateGame = function () {
-
+    socks.spectateGame = function (id) {
+        this.sendMessage(this.SPECTATE_GAME, {
+            groupId: id
+        }, false)
     }
 
     var $scope

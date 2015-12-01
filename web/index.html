@@ -166,6 +166,9 @@
                          class="ui inverted green button">
                         Refresh
                     </div>
+					<div ng-if="isSpectator()" ng-click="stopSpectating()"
+                         class="ui inverted red button">Exit
+                    </div>
                     <div ng-if="myGroup()" onclick="askForStop()"
                          class="ui inverted red button">Stop
                     </div>
