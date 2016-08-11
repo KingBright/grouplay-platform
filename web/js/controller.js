@@ -22,14 +22,18 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
         }
         $scope.myInfo = info.myInfo
         $scope.groups = info
+
+        $scope.$apply()
     }
-	
-	$scope.isSpectator = function () {
+
+    $scope.isSpectator = function () {
         return $scope.joined && $scope.myInfo.index == 5
     }
 
     $scope.myGroup = function () {
-        return $scope.joined && $scope.joined.host.name == $scope.name
+        var ret = $scope.joined && $scope.joined.host.name == $scope.name
+        console.log("myGroup", ret)
+        return ret
     }
 
     $scope.canExit = function () {
@@ -37,7 +41,9 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
     }
 
     $scope.canStart = function () {
-        return $scope.joined && $scope.joined.players && $scope.joined.players.length > 1 && $scope.joined.playing == false
+        var ret = $scope.joined && $scope.joined.players && $scope.joined.players.length > 1 && $scope.joined.playing == false
+        console.log("canStart", ret)
+        return ret
     }
 
     $scope.canJoin = function (group) {
@@ -78,10 +84,10 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
         console.log("spectate group", id)
         socks.spectateGame(id)
     }
-	
-	$scope.stopSpectating = function () {
-		socks.stopSpectating($scope.joined.id)
-	}
+
+    $scope.stopSpectating = function () {
+        socks.stopSpectating($scope.joined.id)
+    }
 
     $scope.dataUpdateCallback
     // For game to register a callback
@@ -162,7 +168,6 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
     }
 }]);
 
-
 grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
     // Socket
     var socks = {}
@@ -184,8 +189,8 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
 
     socks.GET_GAME_LIST = "get_game_list"
     socks.SPECTATE_GAME = "spectate_game"
-	socks.STOP_SPECTATING = "stop_spectating"
-	
+    socks.STOP_SPECTATING = "stop_spectating"
+
 
     socks.init = function () {
         socks.sock = new SockJS(':8081/grouplay')
@@ -351,8 +356,8 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
             data: JSON.stringify(data)
         }, false)
     }
-	
-	socks.stopSpectating = function () {
+
+    socks.stopSpectating = function () {
         this.sendMessage(this.STOP_SPECTATING, {}, false)
     }
 
