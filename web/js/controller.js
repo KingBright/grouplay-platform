@@ -22,8 +22,6 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
         }
         $scope.myInfo = info.myInfo
         $scope.groups = info
-
-        $scope.$apply()
     }
 
     $scope.isSpectator = function () {
