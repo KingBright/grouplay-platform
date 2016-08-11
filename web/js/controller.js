@@ -1,6 +1,6 @@
 var grouplay = angular.module('grouplay', []);
 
-grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', function ($scope, $interval, socks) {
+grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($scope, socks) {
     socks.setScope($scope)
 
     $scope.groups = {}
@@ -166,7 +166,7 @@ grouplay.controller('grouplay-ctrl', ['$scope', '$interval', 'grouplay-socks', f
     }
 }]);
 
-grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
+grouplay.factory('grouplay-socks', ['$timeout', function ($timeout) {
     // Socket
     var socks = {}
     socks.REGISTER = "register"
@@ -205,7 +205,7 @@ grouplay.factory('grouplay-socks', ['$interval', function ($interval) {
         socks.sock.onmessage = function (e) {
             if (e.data) {
                 var json = JSON.parse(e.data)
-                $interval(socks.receiveMessage(json), 0, 1)
+                $timeout(socks.receiveMessage(json), 1)
             }
         }
         socks.sock.onclose = function () {
