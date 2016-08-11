@@ -1,6 +1,6 @@
 <script src="js/lib/utils.js"></script>
-<script src="js/lib/phaser.js"></script>
 <script src="js/game/quoridor/astar.js"></script>
+<script src="js/game/quoridor/quoridor.js"></script>
 <script src="//cdn.bootcss.com/phaser/2.6.1/phaser.min.js"></script>
 
 <style>
@@ -23,7 +23,7 @@
     onUpdateData = function (data) {
         quoridor.game.data.updateData(data)
     }
-    setDataSender = function(sender){
+    setDataSender = function (sender) {
         quoridor.game.data.send = sender
     }
     quoridor.game.initialized = false

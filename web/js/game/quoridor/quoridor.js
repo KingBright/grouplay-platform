@@ -1,6 +1,7 @@
 quoridor = {}
 
 quoridor.game = {}
+quoridor.game.initialized = false
 quoridor.game.instance
 quoridor.game.cellWidth = 50
 quoridor.game.wallWidth = 10
