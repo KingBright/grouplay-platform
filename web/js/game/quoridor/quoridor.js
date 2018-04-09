@@ -32,6 +32,7 @@ quoridor.game.pendingWallIntersected = false // wheather intersected with existe
 quoridor.game.hasRoute = true // If has route to go from current position to destination
 
 quoridor.game.data = {}
+quoridor.game.data.raw
 quoridor.game.data.NONE
 quoridor.game.data.PLAYER
 quoridor.game.data.WALL
@@ -45,14 +46,21 @@ quoridor.game.data.startInfos // start info(position & walls) of all players, or
 quoridor.game.data.currentInfos // current info(position & walls) of all players, order by index
 quoridor.game.data.playerData
 
+quoridor.game.initialize = function () {
+    quoridor.game.init(quoridor.game.WIDTH, quoridor.game.HEIGHT, "quoridor")
+}
+
 quoridor.game.data.updateData = function (data) {
-    if (quoridor.game.initialized == false) {
-        var config = data.config
-        this.NONE = config.none
-        this.PLAYER = config.player
-        this.WALL = config.wall
-        this.panelDataSize = config.width
-    }
+    console.log('quoridor update data')
+
+    this.raw = data;
+    // basic info
+    var config = data.config
+    this.NONE = config.none
+    this.PLAYER = config.player
+    this.WALL = config.wall
+    this.panelDataSize = config.width
+
     // Update game data
     var gameData = data.data
     this.panelData = gameData.panelData
@@ -64,61 +72,64 @@ quoridor.game.data.updateData = function (data) {
     this.playerData = gameData.playerData
     this.playerNum = gameData.playerData.length
 
-    if (quoridor.game.initialized == true) {
-        // Update player positions
-        foreach(this.currentInfos, function (item, index) {
-            quoridor.game.onPositionUpdate(index, item.x, item.y)
-        })
-
-        // Update active player
-        quoridor.game.selectPlayer()
-
-        // Update wall left
-        foreach(this.playerData, function (item, index) {
-            quoridor.game.playerPanelText[index].setText(item.name + " : " + item.wallLeft)
-        })
+    if (quoridor.game.initialized == false) {
+        return
     }
+
+    console.log('update screen...')
+    // Update player positions
+    foreach(this.currentInfos, function (item, index) {
+        quoridor.game.onPositionUpdate(index, item.x, item.y)
+    })
+
+    // Update active player
+    quoridor.game.selectPlayer()
+
+    // Update wall left
+    foreach(this.playerData, function (item, index) {
+        quoridor.game.playerPanelText[index].setText(item.name + " : " + item.wallLeft)
+    })
 
     // Update walls
     this.walls.length = 0
     foreach(gameData.walls, function (item) {
         quoridor.game.data.walls.push(quoridor.game.createWall(item))
     })
-
-    if (quoridor.game.initialized == false) {
-        quoridor.game.init(quoridor.game.WIDTH, quoridor.game.HEIGHT, "quoridor")
-    }
 };
 
 quoridor.game.init = function (w, h, id) {
-    this.initialized = true
     this.width = w
     this.height = h
-    var game = new Phaser.Game(w, h, Phaser.AUTO, id, {
-        preload: preload,
-        create: create,
-        update: update,
-        render: render
-    });
 
     function preload() {
     }
 
     function create() {
+        console.log("initialize start")
         document.body.oncontextmenu = function () {
             return false;
         };
 
-        quoridor.game.initTextures(game)
-        quoridor.game.createGamePanel(game)
-        quoridor.game.createPlayerPanel(game)
-        quoridor.game.screen = quoridor.screens.game
+        console.log("initialize textures")
+        quoridor.game.initTextures(quoridor.game.instance, function () {
+            console.log("initialize game panel")
+            quoridor.game.createGamePanel(quoridor.game.instance)
 
-        game.input.addMoveCallback(function (event, x, y, down) {
-            if (quoridor.game.screen) {
-                quoridor.game.screen.onMouse(x, y, down)
-            }
-        }, game)
+            console.log("initialize player panel")
+            quoridor.game.createPlayerPanel(quoridor.game.instance)
+            quoridor.game.screen = quoridor.screens.game
+
+            console.log("add move callback")
+            quoridor.game.instance.input.addMoveCallback(function (event, x, y, down) {
+                if (quoridor.game.screen) {
+                    quoridor.game.screen.onMouse(x, y, down)
+                }
+            }, this.instance)
+
+            console.log('initialized...')
+            quoridor.game.initialized = true
+            quoridor.game.data.updateData(quoridor.game.data.raw)
+        })
     }
 
     function render() {
@@ -126,11 +137,16 @@ quoridor.game.init = function (w, h, id) {
 
     function update() {
         if (quoridor.game.screen) {
-            quoridor.game.screen.onUpdate(game)
+            quoridor.game.screen.onUpdate(quoridor.game.instance)
         }
     }
 
-    this.instance = game
+    quoridor.game.instance = new Phaser.Game(w, h, Phaser.AUTO, id, {
+        preload: preload,
+        create: create,
+        update: update,
+        render: render
+    });
 }
 
 quoridor.game.getMyRect = function () {
@@ -146,6 +162,7 @@ quoridor.game.isMyTurn = function (index) {
 }
 
 quoridor.game.onPositionUpdate = function (index, x, y) {
+    console.log('update position for player', index, 'position is (', x, ',', y, ')')
     var mySprite = this.gamePanelSprites[index]
     var playerCo = this.getPlayerCoordinate(x, y)
     mySprite.x = playerCo.left
@@ -400,7 +417,7 @@ quoridor.game.createPotential = function (x, y) {
     sprite.mapRect = rect
 }
 
-quoridor.game.initTextures = function (game) {
+quoridor.game.initTextures = function (game, callback) {
     var player_orange = [
         '....7777....',
         '...777777...',
@@ -546,17 +563,28 @@ quoridor.game.initTextures = function (game) {
         '.....22222222...'
     ];
 
-    game.create.texture('redo', redo, 2, 2, 0)
-    game.create.texture('arrow', arrow, 2, 2, 0)
+    var count = 8;
+    var textureCallback = function (context, texture) {
+        console.log('texture created')
+        count = count - 1;
+        if (count == 0) {
+            if (callback) {
+                callback()
+            }
+        }
+    }
 
-    game.create.texture('player_0', player_blue, 2, 2, 0)
+    game.create.texture('redo', redo, 2, 2, 0, true, textureCallback)
+    game.create.texture('arrow', arrow, 2, 2, 0, true, textureCallback)
 
-    game.create.texture('player_1', player_pink, 2, 2, 0)
-    game.create.texture('player_2', player_orange, 2, 2, 0)
-    game.create.texture('player_3', player_green, 2, 2, 0)
+    game.create.texture('player_0', player_blue, 2, 2, 0, true, textureCallback)
 
-    game.create.texture('player_inactive', player_grey, 2, 2, 0)
-    game.create.texture('player_potential', player_white, 2, 2, 0)
+    game.create.texture('player_1', player_pink, 2, 2, 0, true, textureCallback)
+    game.create.texture('player_2', player_orange, 2, 2, 0, true, textureCallback)
+    game.create.texture('player_3', player_green, 2, 2, 0, true, textureCallback)
+
+    game.create.texture('player_inactive', player_grey, 2, 2, 0, true, textureCallback)
+    game.create.texture('player_potential', player_white, 2, 2, 0, true, textureCallback)
 }
 
 // Player pannel
@@ -565,8 +593,9 @@ quoridor.game.createPlayerPanel = function (game) {
     var playerPanelTop = this.playerPanelTop
     var playerNum = this.data.playerNum
     var style = {font: "20px Arial", fill: "#fff", boundsAlignH: "left", boundsAlignV: "middle"};
-
+    console.log('player data', this.data.playerData)
     for (var i = 0; i < playerNum; i++) {
+        console.log("add player", i)
         //icon
         var sprite = game.add.sprite(playerPanelLeft + 40, playerPanelTop + 40 * i, 'player_' + i)
         //name
@@ -575,6 +604,7 @@ quoridor.game.createPlayerPanel = function (game) {
         this.playerPanelSprites.push(sprite)
         this.playerPanelText.push(name)
     }
+    console.log('add player done')
 
     var currentPlayerIndex = this.data.currentIndex
     this.arrow = game.add.sprite(playerPanelLeft, playerPanelTop + 40 * currentPlayerIndex, 'arrow')
@@ -970,6 +1000,8 @@ quoridor.game.selectPlayer = function () {
     var playerPanelTop = quoridor.game.playerPanelTop
     var currentPlayerIndex = quoridor.game.data.currentIndex
     quoridor.game.arrow.y = playerPanelTop + 40 * currentPlayerIndex
+
+    console.log('update arrow position :', y)
 }
 
 quoridor.game.checkConnectivity = function (wallInfo) {

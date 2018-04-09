@@ -5,10 +5,12 @@
     <meta charset="utf-8">
     <script src="js/lib/cookies.js"></script>
     <script src="js/lib/sockjs.js"></script>
+    <script src="js/lib/phaser.js"></script>
     <link href="//cdn.bootcss.com/semantic-ui/2.1.4/semantic.min.css" rel="stylesheet">
     <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/semantic-ui/2.1.4/semantic.js"></script>
     <script src="//cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+
     <title>Grouplay-platform v0.2</title>
     <style>
         #group_panel {
@@ -27,7 +29,8 @@
             <h3 class="ui yellow inverted header">Waiting Groups</h3>
 
             <div class="ui inverted relaxed divided list">
-                <div ng-if="groups.waiting&&groups.waiting.length>0" ng-repeat="item in groups.waiting"
+                <div ng-if="groups.waiting&&groups.waiting.length>0"
+                     ng-repeat="item in groups.waiting"
                      class="item">
                     <div class="right floated content">
                         <!-- Join button -->
@@ -36,7 +39,8 @@
                             <div ng-switch-when="true" ng-click="joinGroup(item.id)"
                                  class="ui inverted blue button">Join
                             </div>
-                            <div ng-switch-when="false" class="ui inverted blue disabled button">Join
+                            <div ng-switch-when="false" class="ui inverted blue disabled button">
+                                Join
                             </div>
                         </div>
                     </div>
@@ -48,7 +52,8 @@
                     <div class="ui mini black label">
                         <i class="eye icon"></i> {{item.spectators.length}}
                     </div>
-                    <div ng-if="item.game" class="ui horizontal green label">{{item.game.name}}</div>
+                    <div ng-if="item.game" class="ui horizontal green label">{{item.game.name}}
+                    </div>
                 </div>
                 <div ng-if="!groups.waiting||groups.waiting.length==0" class="content animate-if">
                     No waiting groups now.
@@ -57,7 +62,8 @@
                 <!-- Playing -->
                 <h3 class="ui yellow inverted header">Playing Groups</h3>
 
-                <div ng-if="groups.playing&&groups.playing.length>0" ng-repeat="item in groups.playing"
+                <div ng-if="groups.playing&&groups.playing.length>0"
+                     ng-repeat="item in groups.playing"
                      class="item">
                     <div class="right floated content">
                         <!-- Spectate button -->
@@ -65,7 +71,8 @@
                             <div ng-switch-when="true" ng-click="spectateGroup(item.id)"
                                  class="ui inverted purple button">Spectate
                             </div>
-                            <div ng-switch-when="false" class="ui inverted purple disabled button">Spectate
+                            <div ng-switch-when="false" class="ui inverted purple disabled button">
+                                Spectate
                             </div>
                         </div>
                     </div>
@@ -77,7 +84,8 @@
                     <div class="ui mini black label">
                         <i class="eye icon"></i> {{item.spectators.length}}
                     </div>
-                    <div ng-if="item.game" class="ui horizontal green label">{{item.game.name}}</div>
+                    <div ng-if="item.game" class="ui horizontal green label">{{item.game.name}}
+                    </div>
                 </div>
                 <div ng-if="!groups.playing||groups.playing.length==0" class="content animate-if">
                     No playing groups now.
@@ -85,7 +93,8 @@
 
                 <div class="item">
                     <!-- Create group button -->
-                    <div ng-click="getGameList()" class="fluid ui inverted bottom attached teal button">Create
+                    <div ng-click="getGameList()"
+                         class="fluid ui inverted bottom attached teal button">Create
                         Group
                     </div>
                 </div>
@@ -106,9 +115,11 @@
                                  class="ui inverted green button">
                                 Start
                             </div>
-                            <div ng-if="myGroup()&&!canStart()" class="ui inverted green disabled button">Start
+                            <div ng-if="myGroup()&&!canStart()"
+                                 class="ui inverted green disabled button">Start
                             </div>
-                            <div ng-if="canExit()" onclick="showExit()" class="ui inverted red button">
+                            <div ng-if="canExit()" onclick="showExit()"
+                                 class="ui inverted red button">
                                 Exit
                             </div>
                             <div ng-if="!canExit()" class="ui inverted red disabled button">Exit
@@ -166,7 +177,7 @@
                          class="ui inverted green button">
                         Refresh
                     </div>
-					<div ng-if="isSpectator()" ng-click="stopSpectating()"
+                    <div ng-if="isSpectator()" ng-click="stopSpectating()"
                          class="ui inverted red button">Exit
                     </div>
                     <div ng-if="myGroup()" onclick="askForStop()"
@@ -178,7 +189,7 @@
     </div>
     <div class="ui middle aligned centered grid">
         <div id="game_frame" class="twelve wide column">
-            <ng-include onload="setDataUpdateCallback()" src="gamePage">
+            <ng-include onload="initialize()" src="gamePage">
             </ng-include>
         </div>
     </div>
@@ -191,7 +202,8 @@
     </div>
     <div class="content">
         <div class="ui input fluid focus">
-            <input id="name" type="text" ng-model="player_name" placeholder="Input your name here...">
+            <input id="name" type="text" ng-model="player_name"
+                   placeholder="Input your name here...">
         </div>
     </div>
     <div ng-if="player_name&&player_name!=''" class="actions">
@@ -271,7 +283,8 @@
         <div class="ui divider"></div>
 
         Please set max player number
-        <select ng-model="playerNumber" ng-options="number as number for number in game.supportPlayer"
+        <select ng-model="playerNumber"
+                ng-options="number as number for number in game.supportPlayer"
                 class="ui dropdown">
         </select>
 

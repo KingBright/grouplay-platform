@@ -1,7 +1,7 @@
 <script src="js/lib/utils.js"></script>
 <script src="js/game/quoridor/astar.js"></script>
 <script src="js/game/quoridor/quoridor.js"></script>
-<script src="//cdn.bootcss.com/phaser/2.6.1/phaser.min.js"></script>
+<script src="js/lib/phaser.js"></script>
 
 <style>
     #game_panel {
@@ -26,5 +26,8 @@
     setDataSender = function (sender) {
         quoridor.game.data.send = sender
     }
-    quoridor.game.initialized = false
+    initialize = function () {
+        console.log('quoridor start initialize')
+        quoridor.game.initialize()
+    }
 </script>

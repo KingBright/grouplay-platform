@@ -87,6 +87,11 @@ grouplay.controller('grouplay-ctrl', ['$scope', 'grouplay-socks', function ($sco
         socks.stopSpectating($scope.joined.id)
     }
 
+    $scope.initialize = function () {
+        $scope.setDataUpdateCallback()
+        initialize()
+    }
+
     $scope.dataUpdateCallback
     // For game to register a callback
     $scope.setDataUpdateCallback = function () {
@@ -247,55 +252,46 @@ grouplay.factory('grouplay-socks', ['$timeout', function ($timeout) {
         }
 
         switch (cmd) {
-            case this.REGISTER:
-            {
+            case this.REGISTER: {
                 //Save session & name to cookies
                 Cookies.set("session", info.id)
                 Cookies.set("name", info.name)
                 break;
             }
-            case this.GROUP_UPDATE:
-            {
+            case this.GROUP_UPDATE: {
                 socks.onGroupUpdate(info)
                 break;
             }
-            case this.PLAYING:
-            {
+            case this.PLAYING: {
                 askForGameRestore()
                 break;
             }
-            case this.START_GAME:
-            {
+            case this.START_GAME: {
                 $scope.myInfo.ingame = true
                 $scope.loadGamePage()
                 break;
             }
-            case this.UPDATE_DATA:
-            {
+            case this.UPDATE_DATA: {
                 console.log("data received", info)
                 if ($scope.dataUpdateCallback) {
                     $scope.dataUpdateCallback(info)
                 }
                 break;
             }
-            case this.GAME_FINISHED:
-            {
+            case this.GAME_FINISHED: {
                 showGameFinish()
                 break;
             }
-            case this.HOST_STOP:
-            {
+            case this.HOST_STOP: {
                 hostStop()
                 break;
             }
-            case this.GET_GAME_LIST:
-            {
+            case this.GET_GAME_LIST: {
                 $scope.gameList = info
                 showCreate()
                 break;
             }
-            case this.SPECTATE_GAME:
-            {
+            case this.SPECTATE_GAME: {
                 $scope.myInfo.ingame = true
                 $scope.loadGamePage()
                 break;
